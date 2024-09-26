@@ -1,9 +1,10 @@
 var Piece = function(config){
     this.position = config.position;
     this.color = config.color;
+    this.board = config.board; 
     if(this.position){
         this.render();        
-    }    
+    }  
 }
 Piece.prototype.moveTo = function(targetPosition){
     console.log("Method not implemeted by: " + this.type);
@@ -13,7 +14,6 @@ Piece.prototype.moveTo = function(targetPosition){
 Piece.prototype.attachListeners = function(){
     //To be implemented
 }
-
 Piece.prototype.render = function(){
     var col = this.position[0];
     var row = this.position[1];
@@ -26,13 +26,10 @@ Piece.prototype.render = function(){
         }
         // Create a new div element to represent the piece
         var pieceElement = document.createElement('div');
-        
-        // Add classes to the new element for styling
+        // Add classes to the new element for stylin
         pieceElement.classList.add('piece', this.color, this.type);
-        
         // Clear any existing content in the cell
-        element.innerHTML = '';
-        
+        element.innerHTML = '';        
         // Append the new piece element to the cell
         element.appendChild(pieceElement);
         this.$el = pieceElement;
@@ -43,5 +40,24 @@ Piece.prototype.render = function(){
 }
 
 Piece.prototype.kill = function(targetPiece){
-    console.log("Method not implemeted by: " + typeof(this));
+    const pieces = targetPiece.color === 'white' ? this.board.whitePieces : this.board.blackPieces;
+    const pieceType = (targetPiece.type === 'king' || targetPiece.type === 'queen') ? targetPiece.type : targetPiece.type + 's';
+    if(targetPiece.type === 'king' || targetPiece.type === 'queen'){
+        delete pieces[targetPiece.type];
+    } else{
+        const index = pieces[pieceType].indexOf(targetPiece);
+        if (index !== -1) {
+            pieces[pieceType].splice(index, 1);
+        }
+    }
+    this.removePiece(targetPiece);
 }
+
+
+
+Piece.prototype.removePiece = function(config) {
+    let $element = document.querySelector(`[data-col="${config.position[0]}"] [data-row="${config.position[1]}"]`);
+    if ($element) {
+        $element.innerHTML = ''; 
+    }
+};
